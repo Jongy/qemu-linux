@@ -1,0 +1,5 @@
+initramfs/bin/busybox
+initramfs.cpio.gz
+kernels/
+fs/
+ext4

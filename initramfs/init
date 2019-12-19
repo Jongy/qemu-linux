@@ -1,0 +1,31 @@
+#!/bin/sh
+
+mount -t proc none /proc
+mount -t sysfs none /sys
+
+mkdir /fs
+mount /dev/sda /fs
+mount_okay=$?
+
+ip addr add 10.1.0.2/24 dev eth0
+ip link set dev eth0 up
+
+echo -e '\033[32m'
+echo "Welcome, Jongy."
+echo "Boot took $(cut -d' ' -f1 /proc/uptime) seconds"
+echo "Kernel version:"
+cat /proc/version
+echo -e '\033[m'
+
+if [ $mount_okay = 0 ]; then
+    echo -e "\033[32mFilesystem is mounted at /fs\033[m"
+
+    if [ -f fs/init.sh ]; then
+        echo "Running fs/init.sh"
+        fs/init.sh
+    fi
+else
+    echo -e "\033[32mFilesystem mount failed\033[m"
+fi
+
+exec /bin/sh
