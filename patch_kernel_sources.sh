@@ -15,12 +15,12 @@ echo "Found kernel $major.$patchlevel"
 
 echo "Patching..."
 
-# 4.16
-if [[ "$major" -le "3" || ("$major" -eq "4" && "$patchlevel" -le "15") ]]; then
-    echo "Patching e3d03598e8ae7d195af5d3d049596dec336f569f"
-    # fixes linker change from binutils > 2.31
-    # doesn't hurt to apply even if using an older ld (older ld had this as default)
-    git cherry-pick -n e3d03598e8ae7d195af5d3d049596dec336f569f
+# 4.9
+if [[ "$major" -le 3 || ("$major" -eq 4 && "$patchlevel" -le 8) ]]; then
+    echo "Patching c6a385539175ebc603da53aafb7753d39089f32e"
+    # new GCC defaults to use -fpie, but can't use it for kernel code.
+    git cherry-pick -n c6a385539175ebc603da53aafb7753d39089f32e
+    git reset
 fi
 
 # 4.11
@@ -28,16 +28,23 @@ if [[ "$major" -le 3 || ("$major" -eq 4 && "$patchlevel" -le 10) ]]; then
     echo "Patching 474c90156c8dcc2fa815e6716cc9394d7930cb9c"
     # warning about some log2 function
     git cherry-pick -n 474c90156c8dcc2fa815e6716cc9394d7930cb9c
+    git reset
 fi
 
-# 4.9
-if [[ "$major" -le 3 || ("$major" -eq 4 && "$patchlevel" -le 8) ]]; then
-    echo "Patching c6a385539175ebc603da53aafb7753d39089f32e"
-    # new GCC defaults to use -fpie, but can't use it for kernel code.
-    git cherry-pick -n c6a385539175ebc603da53aafb7753d39089f32e
-fi
+# 4.16
+if [[ "$major" -le "3" || ("$major" -eq "4" && "$patchlevel" -le "15") ]]; then
+    echo "Patching e3d03598e8ae7d195af5d3d049596dec336f569f"
+    # fixes linker change from binutils > 2.31
+    # doesn't hurt to apply even if using an older ld (older ld had this as default)
+    git cherry-pick -n e3d03598e8ae7d195af5d3d049596dec336f569f
+    git reset
 
-git reset
+    echo "Patching b21ebf2fb4cde1618915a97cc773e287ff49173e"
+    # also related to changes in binutils 2.31
+    # fixes lkm loading
+    git cherry-pick -n b21ebf2fb4cde1618915a97cc773e287ff49173e
+    git reset
+fi
 
 echo "Done patching"
 
