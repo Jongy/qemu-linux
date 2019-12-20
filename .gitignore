@@ -3,3 +3,4 @@ initramfs.cpio.gz
 kernels/
 fs/
 ext4
+update_fs.sh

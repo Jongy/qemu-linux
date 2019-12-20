@@ -1,7 +1,12 @@
+set -e
+
 if [ $# != 1 ]; then
     echo "usage: $0 /path/to/kernel"
     exit 1
 fi
+
+mkdir -p fs
+[[ -f ./update_fs.sh ]] && ./update_fs.sh
 
 fallocate -l 30M ext4
 mkfs.ext4 -F ext4 -d fs
