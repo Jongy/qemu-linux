@@ -1,3 +1,6 @@
+#!/bin/sh
+set -e
+
 OUTPUT=initramfs.cpio.gz
 
 pushd initramfs
@@ -5,8 +8,10 @@ pushd initramfs
 # other directories are tracked by git because they are populated.
 mkdir -p {dev,etc,lib,proc,sbin,sys,fs}
 
-echo "Requesting sudo for initramfs /dev/sda"
-sudo mknod dev/sda b 8 0
+if [ ! -b dev/sda ]; then
+    echo "Requesting sudo for initramfs /dev/sda"
+    sudo mknod dev/sda b 8 0
+fi
 
 if [ ! -f bin/busybox ]; then
     echo "Busybox not found, downloading..."
