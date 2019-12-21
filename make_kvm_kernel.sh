@@ -1,3 +1,4 @@
+#!/bin/bash
 # builds a kernel with configuration for kvm plus any features I like for development
 set -e
 
