@@ -24,8 +24,14 @@ mkdir -p fs
 fallocate -l 30M ext4
 mkfs.ext4 -F ext4 -d fs
 
+if [ -d "$1" ]; then
+    kernel="$1/arch/x86/boot/bzImage"
+else
+    kernel="$1"
+fi
+
 qemu-system-x86_64 \
-    -kernel "$1" \
+    -kernel "$kernel" \
     -enable-kvm \
     -initrd initramfs.cpio.gz \
     -nographic -append "nokaslr console=ttyS0" \
