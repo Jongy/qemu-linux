@@ -35,6 +35,6 @@ qemu-system-x86_64 \
     -enable-kvm \
     -initrd initramfs.cpio.gz \
     -nographic -append "nokaslr console=ttyS0" \
-    -drive file=ext4,format=raw \
+    -drive if=virtio,file=ext4,format=raw \
     -netdev tap,id=net0,ifname=$TAP_NAME,script=no,downscript=no \
-    -device e1000,netdev=net0
+    -device virtio-net,netdev=net0
