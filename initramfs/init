@@ -3,8 +3,12 @@
 mount -t proc none /proc
 mount -t sysfs none /sys
 
-mkdir /fs
-mount /dev/sda /fs
+mkdir -p /fs
+
+mknod dev/sda b 8 0
+mknod dev/vda b 254 0
+
+mount /dev/sda /fs || mount /dev/vda /fs
 mount_okay=$?
 
 ip addr add 10.1.0.2/24 dev eth0
