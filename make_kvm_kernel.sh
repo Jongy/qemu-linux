@@ -54,13 +54,14 @@ if [ "$base_config" == "alldefconfig" ]; then
     enable_config BLK_DEV_INITRD
     enable_config RD_GZIP
     enable_config INITRAMFS_COMPRESSION_GZIP
-
-    # debugging stuff
-    enable_config KPROBES
-    enable_config FTRACE
 fi
 
 make O="$kernel_dir" kvmconfig
+
+# debugging stuff
+enable_config KPROBES
+enable_config FTRACE
+enable_config FUNCTION_TRACER
 
 # select new defaults after more options trees have been opened
 make O="$kernel_dir" olddefconfig
