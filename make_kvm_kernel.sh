@@ -62,6 +62,7 @@ make O="$kernel_dir" kvmconfig
 enable_config KPROBES
 enable_config FTRACE
 enable_config FUNCTION_TRACER
+enable_config KALLSYMS_ALL
 
 # select new defaults after more options trees have been opened
 make O="$kernel_dir" olddefconfig
