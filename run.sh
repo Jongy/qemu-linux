@@ -30,11 +30,13 @@ else
     kernel="$1"
 fi
 
+# TODO enable virtio
+
 qemu-system-x86_64 \
     -kernel "$kernel" \
     -enable-kvm \
     -initrd initramfs.cpio.gz \
     -nographic -append "nokaslr console=ttyS0" \
-    -drive if=virtio,file=ext4,format=raw \
+    -drive file=ext4,format=raw \
     -netdev tap,id=net0,ifname=$TAP_NAME,script=no,downscript=no \
     -device virtio-net,netdev=net0
