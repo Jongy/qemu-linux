@@ -35,6 +35,7 @@ fi
 qemu-system-x86_64 \
     -kernel "$kernel" \
     -enable-kvm \
+    -smp cpus=4 \
     -initrd initramfs.cpio.gz \
     -nographic -append "nokaslr console=ttyS0" \
     -drive file=ext4,format=raw \
