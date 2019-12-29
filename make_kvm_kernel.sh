@@ -8,6 +8,7 @@ if [ "$#" -ne 4 ]; then
 fi
 
 patch_kernel_sources=$(realpath $(dirname $0)/patch_kernel_sources.sh)
+copy_kernel_headers=$(realpath $(dirname $0)/copy_kernel_headers.sh)
 
 linux_source_dir=$(realpath $1)
 mkdir -p "$2"
@@ -68,5 +69,7 @@ enable_config KALLSYMS_ALL
 make O="$kernel_dir" olddefconfig
 
 time make O="$kernel_dir" -j 8
+
+"$copy_kernel_headers" "$linux_source_dir" "$kernel_dir"
 
 popd
