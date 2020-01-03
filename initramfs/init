@@ -11,8 +11,24 @@ mknod /dev/urandom c 1 9
 mknod /dev/sda b 8 0
 mknod /dev/vda b 254 0
 
+mknod dev/ttyS0 c 4 64
+
+mknod /dev/tty c 5 0
+mknod /dev/ptmx c 5 2
+mkdir /dev/pts
+mount -t devpts none /dev/pts
+
 mount -t debugfs none /sys/kernel/debug
 
+if [ -f /usr/sbin/dropbear ]; then
+    mkdir /etc/dropbear
+    touch /etc/group
+    addgroup -g 0 root
+    touch /etc/passwd
+    adduser -s /bin/sh -G root -h /root -u 0 -D root
+    echo -e "a" | passwd root
+    /usr/sbin/dropbear -RE  # regenerate host keys, errors to stdout
+fi
 
 mkdir -p /fs
 mount /dev/sda /fs || mount /dev/vda /fs
