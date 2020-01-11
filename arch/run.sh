@@ -20,9 +20,9 @@ mount -o ro "$2" $TMPMOUNT
 
 (sleep 3; umount $TMPMOUNT)&
 
-kernel=$(echo $TMPMOUNT/boot/vmlinuz-*)
+kernel=$(ls -ct $TMPMOUNT/boot/vmlinuz-* | head -n 1)
 echo "using kernel $kernel"
-[ -f $TMPMOUNT/boot/initrd* ] && initrd=$(echo $TMPMOUNT/boot/initrd*)
+ls $TMPMOUNT/boot/initrd* 1>/dev/null 2>&1 && initrd=$(ls -ct $TMPMOUNT/boot/initrd* | head -n 1)
 [ -f $TMPMOUNT/boot/initramfs-linux.img ] && initrd=$TMPMOUNT/boot/initramfs-linux.img
 echo "using initrd $initrd"
 
