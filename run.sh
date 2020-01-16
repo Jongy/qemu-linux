@@ -30,14 +30,28 @@ else
     kernel="$1"
 fi
 
-# TODO enable virtio
+initramfs="initramfs.cpio.gz"
+kernel_dir=$(dirname "$1")
+if [ -e "$kernel_dir"/lib_modules ]; then
+    # it has a modules directory. this is used when we really need the modules
+    # to be loaded, e.g on centos which has e1000 as a module and not a built in.
+
+    # make new one if it doesn't have
+    if [ ! -f "$kernel_dir"/initramfs.cpio.gz ]; then
+        ./make_initramfs.sh "$kernel_dir"/initramfs.cpio.gz "$kernel_dir"/lib_modules
+    fi
+
+    initramfs="$kernel_dir"/initramfs.cpio.gz
+fi
+
+# TODO enable virtio. or not? e1000 is easier.
 
 qemu-system-x86_64 \
     -kernel "$kernel" \
     -enable-kvm \
     -smp cpus=4 \
-    -initrd initramfs.cpio.gz \
+    -initrd "$initramfs" \
     -nographic -append "nokaslr console=ttyS0" \
     -drive file=ext4,format=raw \
     -netdev tap,id=net0,ifname=$TAP_NAME,script=no,downscript=no \
-    -device virtio-net,netdev=net0
+    -device e1000,netdev=net0

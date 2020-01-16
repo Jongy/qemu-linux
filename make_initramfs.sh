@@ -1,7 +1,20 @@
 #!/bin/bash
 set -e
 
-OUTPUT=initramfs.cpio.gz
+if [ $# -ge 1 ]; then
+    output=$(realpath $1)
+else
+    output=$(realpath initramfs.cpio.gz)
+fi
+
+if [ $# -eq 2 ]; then
+    lib_modules=$(realpath "$2")
+fi
+
+if [ $# -ge 3 ]; then
+    echo "usage: $0 [output [lib/modules directory]]"
+    exit 1
+fi
 
 pushd initramfs
 
@@ -14,9 +27,17 @@ if [ ! -f bin/busybox ]; then
     chmod +x bin/busybox
 fi
 
-find -print0 | cpio --null -ov --format=newc | gzip -9 > ../$OUTPUT
+if [ ! -z "$lib_modules" ]; then
+    cp -r "$lib_modules" lib/modules
+fi
+
+find -print0 | cpio --null -ov --format=newc | gzip -9 > "$output"
+
+if [ ! -z "$lib_modules" ]; then
+    rm -r lib/modules
+fi
 
 popd
 
 echo
-echo "initramfs ready at $OUTPUT"
+echo "initramfs ready at $output"

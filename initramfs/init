@@ -31,9 +31,18 @@ if [ -f /usr/sbin/dropbear ]; then
 fi
 
 mkdir -p /fs
-mount /dev/sda /fs || mount /dev/vda /fs
+mount /dev/sda /fs 1>/dev/null 2>&1 || mount /dev/vda /fs 1>/dev/null 2>&1
 mount_okay=$?
 
+if [ $mount_okay != 0 ]; then
+    # centos doesn't have these built in, so load
+    modprobe ata_piix
+    modprobe ext4
+    mount /dev/sda /fs 1>/dev/null 2>&1
+    mount_okay=$?
+fi
+
+modprobe e1000
 ip addr add 10.1.0.2/24 dev eth0
 ip link set dev eth0 up
 
