@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 TAP_NAME=tap-qemu
 
 if [ -d /sys/class/net/$TAP_NAME ] ; then
@@ -12,7 +14,7 @@ if [ $EUID -ne 0 ] || [ "$SUDO_USER" == "root" ]; then
     exit 1
 fi
 
-tunctl -u $SUDO_USER -t $TAP_NAME
+ip tuntap add dev $TAP_NAME mode tap user $SUDO_USER
 
 ip addr add 10.1.0.1/24 dev $TAP_NAME
 ip link set dev $TAP_NAME up
