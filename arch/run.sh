@@ -1,6 +1,7 @@
 #!/bin/bash
 
 # run the VM disk previosly created with make.sh
+# runs the kernel directly
 
 set -e
 
