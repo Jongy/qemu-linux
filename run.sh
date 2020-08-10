@@ -50,6 +50,7 @@ qemu-system-x86_64 \
     -kernel "$kernel" \
     -enable-kvm \
     -smp cpus=4 \
+    -m 8192 \
     -initrd "$initramfs" \
     -nographic -append "nokaslr console=ttyS0" \
     -drive file=ext4,format=raw \
