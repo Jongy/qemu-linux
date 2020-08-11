@@ -64,7 +64,12 @@ if [ "$base_config" == "alldefconfig" ]; then
     enable_config INITRAMFS_COMPRESSION_GZIP
 fi
 
-make CC="$cc" O="$kernel_dir" kvmconfig
+if ! make CC="$cc" O="$kernel_dir" kvmconfig ; then
+    echo
+    echo "make kvmconfig failed, perhaps it's missing in current kernel version"
+    echo "check and continue when ready"
+    read
+fi
 
 # debugging stuff
 enable_config KPROBES
