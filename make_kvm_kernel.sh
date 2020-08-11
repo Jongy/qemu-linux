@@ -76,6 +76,7 @@ enable_config KPROBES
 enable_config FTRACE
 enable_config FUNCTION_TRACER
 enable_config KALLSYMS_ALL
+enable_config PREEMPT
 
 # select new defaults after more options trees have been opened
 make CC="$cc" O="$kernel_dir" olddefconfig
