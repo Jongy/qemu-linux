@@ -31,10 +31,12 @@ cp "$kernel" "$tmp_kernel"
 cp "$initrd" "$tmp_initrd"
 umount $TMPMOUNT
 
+mac=$(python "$DIR/gen_mac.py" "$2")
+
 qemu-system-x86_64 \
     -enable-kvm \
     -m 2048 -smp cpus=4 \
-    -device virtio-net,netdev=network0 \
+    -device virtio-net,netdev=network0,mac="$mac" \
     -netdev tap,id=network0,ifname=tap-"$name",script=$DIR/configure_tap_"$name".sh,downscript=$DIR/deconfigure_tap_"$name".sh \
     -drive file="$2",media=disk,format=raw \
     -kernel "$tmp_kernel" -initrd "$tmp_initrd" \
