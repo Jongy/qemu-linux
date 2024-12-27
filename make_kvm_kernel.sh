@@ -2,8 +2,8 @@
 # builds a kernel with configuration for kvm plus any features I like for development
 set -e
 
-if [[ "$#" -ne 4 && "$#" -ne 5 ]]; then
-    echo "Usage: $0 linux_source_dir kernels_dir version base_config (alldefconfig/x86_64_defconfig) [CC]"
+if [[ "$#" -ne 4 ]]; then
+    echo "Usage: $0 linux_source_dir kernels_dir version base_config (alldefconfig/x86_64_defconfig)"
     exit 1
 fi
 
@@ -16,11 +16,8 @@ kernels_dir=$(realpath $2)
 version="$3"
 base_config="$4"
 
-if [ "$#" -eq 5 ]; then
-    cc="$5"
-else
-    cc="gcc"
-fi
+cc=${CC:-gcc}
+ld=${LD:-ld}
 
 case "$base_config" in
     alldefconfig|x86_64_defconfig) ;;
@@ -49,7 +46,7 @@ function enable_config() {
 }
 
 mkdir -p "$kernel_dir"
-make CC="$cc" O="$kernel_dir" "$base_config"
+make CC="$cc" HOSTCC="$cc" O="$kernel_dir" "$base_config"
 
 if [ "$base_config" == "alldefconfig" ]; then
     # for the /fs partition
@@ -64,9 +61,9 @@ if [ "$base_config" == "alldefconfig" ]; then
     enable_config INITRAMFS_COMPRESSION_GZIP
 fi
 
-if ! make CC="$cc" O="$kernel_dir" kvmconfig ; then
+if ! make CC="$cc" HOSTCC="$cc" O="$kernel_dir" kvm_guest.config ; then
     echo
-    echo "make kvmconfig failed, perhaps it's missing in current kernel version"
+    echo "make kvm_guest.config failed, perhaps it's missing in current kernel version"
     echo "check and continue when ready"
     read
 fi
@@ -79,9 +76,9 @@ enable_config KALLSYMS_ALL
 enable_config PREEMPT
 
 # select new defaults after more options trees have been opened
-make CC="$cc" O="$kernel_dir" olddefconfig
+make CC="$cc" HOSTCC="$cc" O="$kernel_dir" olddefconfig
 
-build_cmd="make CC="$cc" O="$kernel_dir" -j 8"
+build_cmd="make CC="$cc" HOSTCC="$cc" LD="$ld" O="$kernel_dir" -j 8"
 echo "running build: $build_cmd"
 $build_cmd
 
