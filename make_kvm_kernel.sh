@@ -45,6 +45,10 @@ function enable_config() {
     ./scripts/config --file "$kernel_dir/.config" -e $1
 }
 
+function disable_config() {
+    ./scripts/config --file "$kernel_dir/.config" -d $1
+}
+
 mkdir -p "$kernel_dir"
 make CC="$cc" HOSTCC="$cc" O="$kernel_dir" "$base_config"
 
@@ -69,11 +73,31 @@ if ! make CC="$cc" HOSTCC="$cc" O="$kernel_dir" kvm_guest.config ; then
 fi
 
 # debugging stuff
+enable_config DEBUG_INFO_DWARF5
+enable_config IKCONFIG
+enable_config IKCONFIG_PROC
+enable_config FRAME_POINTER
+
 enable_config KPROBES
 enable_config FTRACE
 enable_config FUNCTION_TRACER
 enable_config KALLSYMS_ALL
 enable_config PREEMPT
+
+# BPF options from Ubuntu config-6.8.0-51-generic
+enable_config CONFIG_HAVE_EBPF_JIT
+enable_config CONFIG_ARCH_WANT_DEFAULT_BPF_JIT
+enable_config CONFIG_BPF_SYSCALL
+enable_config CONFIG_BPF_JIT
+enable_config CONFIG_BPF_JIT_ALWAYS_ON
+enable_config CONFIG_BPF_JIT_DEFAULT_ON
+enable_config CONFIG_BPF_UNPRIV_DEFAULT_OFF
+enable_config CONFIG_BPF_LSM
+enable_config CONFIG_NETFILTER_BPF_LINK
+enable_config CONFIG_BPF_STREAM_PARSER
+enable_config CONFIG_BPF_EVENTS
+enable_config CONFIG_BPF_KPROBE_OVERRIDE
+enable_config CONFIG_DEBUG_INFO_BTF
 
 # select new defaults after more options trees have been opened
 make CC="$cc" HOSTCC="$cc" O="$kernel_dir" olddefconfig

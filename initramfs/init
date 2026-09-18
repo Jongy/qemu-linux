@@ -17,7 +17,7 @@ mknod /dev/tty c 5 0
 mknod /dev/ptmx c 5 2
 mkdir /dev/pts
 mount -t devpts none /dev/pts
-
+mount -t cgroup2 none /sys/fs/cgroup
 mount -t debugfs none /sys/kernel/debug
 
 if [ -f /usr/sbin/dropbear ]; then
@@ -26,8 +26,8 @@ if [ -f /usr/sbin/dropbear ]; then
     addgroup -g 0 root
     touch /etc/passwd
     adduser -s /bin/sh -G root -h /root -u 0 -D root
-    echo -e "a" | passwd root
-    /usr/sbin/dropbear -RE  # regenerate host keys, errors to stdout
+    echo "root:a" | chpasswd
+    /usr/sbin/dropbear -R  # regenerate host keys, errors to stdout
 fi
 
 mkdir -p /fs

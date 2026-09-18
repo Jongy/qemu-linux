@@ -46,13 +46,21 @@ fi
 
 # TODO enable virtio. or not? e1000 is easier.
 
-qemu-system-x86_64 \
+if echo "$kernel" | egrep -q 'aarch64|arm64' ; then
+    QEMU=qemu-system-aarch64
+    EXTRA_ARGS="-M virt -bios /usr/share/qemu-efi-aarch64/QEMU_EFI.fd -cpu cortex-a72"
+else
+    QEMU=qemu-system-x86_64
+    EXTRA_ARGS="-enable-kvm"
+fi
+
+$QEMU \
     -kernel "$kernel" \
-    -enable-kvm \
     -smp cpus=4 \
     -m 8192 \
     -initrd "$initramfs" \
     -nographic -append "nokaslr console=ttyS0" \
     -drive file=ext4,format=raw \
     -netdev tap,id=net0,ifname=$TAP_NAME,script=no,downscript=no \
-    -device e1000,netdev=net0
+    -device e1000,netdev=net0 \
+    $EXTRA_ARGS
